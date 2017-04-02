@@ -10,11 +10,13 @@ gulp.task('sync', function () {
 })
 
 gulp.task('sass', function() {
-	gulp.src("sass/*")
+	gulp.src("sass/*.scss")
 	.pipe(sass().on('error', sass.logError))
 	.pipe(gulp.dest('./css'))
-	.pipe(browserSync.reload())
+	.pipe(browserSync.reload({stream:true}))
 })
+
 gulp.task('run', ['sync'], function () {
-	gulp.watch("sass/*")
+	gulp.watch("index.html").on('change', browserSync.reload)
+	gulp.watch("sass/*", ["sass"])
 } )
