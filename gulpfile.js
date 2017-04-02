@@ -1,5 +1,8 @@
 "use strict";
 
+var gutil = require('gulp-util');
+
+
 var gulp = require('gulp');
 var sass = require('gulp-sass');
 // var sass = require('gulp-rename');
@@ -16,7 +19,17 @@ gulp.task('sass', function() {
 	.pipe(browserSync.reload({stream:true}))
 })
 
+var coffeescript = require('gulp-coffeescript');
+ 
+gulp.task('coffee', function() {
+  gulp.src('./js/*.coffee')
+    .pipe(coffeescript({bare: true}).on('error', gutil.log))
+    .pipe(gulp.dest('./public/'))
+	.pipe(browserSync.reload({stream:true}))
+});
+
 gulp.task('run', ['sync'], function () {
-	gulp.watch("index.html").on('change', browserSync.reload)
-	gulp.watch("sass/*", ["sass"])
+	gulp.watch("index.html").on('change', browserSync.reload);
+	gulp.watch("sass/*", ["sass"]);
+	gulp.watch("js/*.coffee", ["coffee"])
 } )
