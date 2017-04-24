@@ -4,6 +4,12 @@ var gulp = require('gulp');
 var sass = require('gulp-sass');
 var browserSync = require('browser-sync');
 
+// sass adds
+const prefix = require('gulp-autoprefixer');
+const comb = require('gulp-csscomb');
+const beautify = require('gulp-cssbeautify');
+const minify = require('gulp-minify-css');
+
 gulp.task('sync', function () {
 	browserSync({server:{baseDir:'.'}})
 })
@@ -11,29 +17,25 @@ gulp.task('sync', function () {
 gulp.task('sass', function() {
 	gulp.src("sass/*.sass")
 	.pipe(sass().on('error', sass.logError))
+  .pipe(comb())
+  .pipe(beautify())
 	.pipe(gulp.dest('./css'))
+  // il ne va pas balancer les partials
 	.pipe(browserSync.reload({stream:true}))
 })
-
-var coffeescript = require('gulp-coffeescript');
- 
-gulp.task('coffee', function() {
-  gulp.src('./js/*.coffee')
-    .pipe(coffeescript({bare: true}).on('error', gutil.log))
-    .pipe(gulp.dest('./public/'))
-		.pipe(browserSync.reload({stream:true}))
-});
 
 
 var concat = require('gulp-concat');
 
 gulp.task('minify-css', function() {
-  return gulp.src('css/*.css')
+     gulp.src('css/*.css')
 //    .pipe(cleanCSS({compatibility: 'ie8'}))
-    .pipe(concat('style.min.css'))
+    // .pipe(concat('style.min.css'))
+    .pipe(minify())
     .pipe(gulp.dest('dist'))
 		.pipe(browserSync.reload({stream:true}));
 });
+
 
 //     __  ______    _____   __
 //    /  |/  /   |  /  _/ | / /
@@ -45,10 +47,8 @@ gulp.task('minify-css', function() {
 
 gulp.task('run', ['sync'], function () {
 	gulp.watch("index.html").on('change', browserSync.reload);
-	
 	gulp.watch("sass/*", ["sass"]);
 	gulp.watch("css/*", ["minify-css"]);
-
 	gulp.watch("js/*.coffee", ["coffee"]);
 } )
 
